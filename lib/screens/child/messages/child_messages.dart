@@ -106,100 +106,110 @@ class _ChildMessagesState extends State<ChildMessages> {
         children: [
           isLoading
               ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.only(bottom: 100.0),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          TextField(
-                            decoration: const InputDecoration(
-                              filled: true,
-                              fillColor: Color(0xfff6f6f6),
-                              hintText: "Search",
-                              prefixIcon:
-                                  Icon(Icons.search, color: Colors.grey),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0xffe8e8e8)),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0xffe8e8e8)),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              hintStyle: TextStyle(color: Colors.grey),
-                            ),
-                            onChanged: (value) {
-                              // Handle search logic
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          // Support Section
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: supports.length,
-                            itemBuilder: (context, index) {
-                              final support = supports[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ChildMessage(
-                                              otherUserEmail: support["email"],
-                                              otherUserName: support["name"],
-                                            )),
-                                  );
-                                },
-                                child: Card(
-                                  color: Colors.white,
-                                  elevation: 0,
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 4.0),
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        color: Color(0xffe8e8e8)),
-                                    borderRadius: BorderRadius.circular(8.0),
+              : supports.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No messages available.",
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: 100.0),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 16),
+                              TextField(
+                                decoration: const InputDecoration(
+                                  filled: true,
+                                  fillColor: Color(0xfff6f6f6),
+                                  hintText: "Search",
+                                  prefixIcon:
+                                      Icon(Icons.search, color: Colors.grey),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xffe8e8e8)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
                                   ),
-                                  child: ListTile(
-                                    title: Text(
-                                      support["name"],
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff666666),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xffe8e8e8)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                  ),
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                ),
+                                onChanged: (value) {
+                                  // Handle search logic
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              // Support Section
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: supports.length,
+                                itemBuilder: (context, index) {
+                                  final support = supports[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ChildMessage(
+                                                  otherUserEmail:
+                                                      support["email"],
+                                                  otherUserName:
+                                                      support["name"],
+                                                )),
+                                      );
+                                    },
+                                    child: Card(
+                                      color: Colors.white,
+                                      elevation: 0,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 4.0),
+                                      shape: RoundedRectangleBorder(
+                                        side: const BorderSide(
+                                            color: Color(0xffe8e8e8)),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      child: ListTile(
+                                        title: Text(
+                                          support["name"],
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff666666),
+                                          ),
+                                        ),
+                                        // trailing: Row(
+                                        //   mainAxisSize: MainAxisSize.min,
+                                        //   children: [
+                                        //     Icon(
+                                        //       supportNotifications[index]
+                                        //           ? Icons.notifications_active
+                                        //           : Icons.notifications_none,
+                                        //       color: supportNotifications[index]
+                                        //           ? Colors.orange
+                                        //           : Colors.grey,
+                                        //     ),
+                                        //   ],
+                                        // ),
                                       ),
                                     ),
-                                    // trailing: Row(
-                                    //   mainAxisSize: MainAxisSize.min,
-                                    //   children: [
-                                    //     Icon(
-                                    //       supportNotifications[index]
-                                    //           ? Icons.notifications_active
-                                    //           : Icons.notifications_none,
-                                    //       color: supportNotifications[index]
-                                    //           ? Colors.orange
-                                    //           : Colors.grey,
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                  ),
-                                ),
-                              );
-                            },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(

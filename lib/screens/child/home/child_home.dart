@@ -200,6 +200,50 @@ class ChildHome extends StatefulWidget {
 
 class _ChildHomeState extends State<ChildHome> {
   bool _isMoodDrawerVisible = true;
+  String? _userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('email');
+
+      if (email == null) {
+        setState(() {
+          _userName = "User";
+        });
+        return;
+      }
+
+      const url = "$baseUrl/get-user-name";
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _userName = data['name'] ?? "User";
+        });
+      } else {
+        setState(() {
+          _userName = "User";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _userName = "User";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,9 +350,9 @@ class _ChildHomeState extends State<ChildHome> {
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      "Hello John",
-                      style: TextStyle(
+                    Text(
+                      "Hello ${_userName ?? 'User'}",
+                      style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
