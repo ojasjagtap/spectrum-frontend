@@ -61,9 +61,9 @@ class _SupportAddChildState extends State<SupportAddChild> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Child linked successfully!")),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text("Child linked successfully!")),
+        // );
         Navigator.pushReplacementNamed(context, "/support_children");
       } else {
         final errorMessage = jsonDecode(response.body)['message'];

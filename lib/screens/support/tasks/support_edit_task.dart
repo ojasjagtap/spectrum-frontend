@@ -76,9 +76,6 @@ class _SupportEditTaskState extends State<SupportEditTask> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Task updated successfully!")),
-        );
         Navigator.pop(context);
       } else {
         final errorMessage = jsonDecode(response.body)['message'];

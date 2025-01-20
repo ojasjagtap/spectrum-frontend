@@ -41,9 +41,9 @@ class SupportAddSupport extends StatelessWidget {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Support linked successfully!")),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text("Support linked successfully!")),
+        // );
         Navigator.pop(context);
       } else {
         final errorMessage = jsonDecode(response.body)['message'];

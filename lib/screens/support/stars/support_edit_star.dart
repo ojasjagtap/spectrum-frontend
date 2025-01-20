@@ -75,9 +75,9 @@ class _SupportEditStarState extends State<SupportEditStar> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Star updated successfully!")),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text("Star updated successfully!")),
+        // );
         Navigator.pop(context);
       } else {
         final errorMessage = jsonDecode(response.body)['message'];

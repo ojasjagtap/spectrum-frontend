@@ -89,10 +89,10 @@ class _SupportChildrenState extends State<SupportChildren> {
                     children
                         .removeWhere((child) => child["email"] == childEmail);
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Child link removed successfully")),
-                  );
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(
+                  //       content: Text("Child link removed successfully")),
+                  // );
                 } else {
                   final errorMessage = jsonDecode(response.body)['message'];
                   ScaffoldMessenger.of(context).showSnackBar(
