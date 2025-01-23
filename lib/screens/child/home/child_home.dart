@@ -511,7 +511,7 @@ class _ChildHomeState extends State<ChildHome> {
     required double cardHeight,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
       child: Stack(
         clipBehavior: Clip.none,
         children: [

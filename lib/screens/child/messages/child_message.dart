@@ -133,6 +133,7 @@ class _ChildMessageState extends State<ChildMessage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -176,7 +177,7 @@ class _ChildMessageState extends State<ChildMessage> {
                 : SingleChildScrollView(
                     controller: _scrollController,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
                       child: Column(
                         children: [
                           const SizedBox(height: 16),

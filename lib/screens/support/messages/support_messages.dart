@@ -15,7 +15,10 @@ class SupportMessages extends StatefulWidget {
 class _SupportMessagesState extends State<SupportMessages> {
   List<Map<String, dynamic>> children = [];
   List<Map<String, dynamic>> supports = [];
+  List<Map<String, dynamic>> filteredChildren = [];
+  List<Map<String, dynamic>> filteredSupports = [];
   bool isLoading = true;
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -48,6 +51,8 @@ class _SupportMessagesState extends State<SupportMessages> {
         setState(() {
           children = List<Map<String, dynamic>>.from(data['children']);
           supports = List<Map<String, dynamic>>.from(data['supports']);
+          filteredChildren = children;
+          filteredSupports = supports;
           isLoading = false;
         });
       } else {
@@ -62,6 +67,19 @@ class _SupportMessagesState extends State<SupportMessages> {
     }
   }
 
+  void filterUsers(String query) {
+    setState(() {
+      searchQuery = query.toLowerCase();
+      filteredChildren = children
+          .where((child) => child["name"].toLowerCase().contains(searchQuery))
+          .toList();
+      filteredSupports = supports
+          .where(
+              (support) => support["name"].toLowerCase().contains(searchQuery))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -69,6 +87,7 @@ class _SupportMessagesState extends State<SupportMessages> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           elevation: 0,
@@ -111,153 +130,141 @@ class _SupportMessagesState extends State<SupportMessages> {
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          TextField(
-                            decoration: const InputDecoration(
-                              filled: true,
-                              fillColor: Color(0xfff6f6f6),
-                              hintText: "Search",
-                              prefixIcon:
-                                  Icon(Icons.search, color: Colors.grey),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0xffe8e8e8)),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0xffe8e8e8)),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              hintStyle: TextStyle(color: Colors.grey),
+                      child: Column(children: [
+                        const SizedBox(height: 16),
+                        TextField(
+                          decoration: const InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xfff6f6f6),
+                            hintText: "Search",
+                            prefixIcon: Icon(Icons.search, color: Colors.grey),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0)),
                             ),
-                            onChanged: (value) {
-                              // Handle search logic
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0)),
+                            ),
+                            hintStyle: TextStyle(color: Colors.grey),
+                          ),
+                          onChanged: filterUsers,
+                        ),
+                        // Children Section
+                        if (filteredChildren.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "CHILDREN",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredChildren.length,
+                            itemBuilder: (context, index) {
+                              final child = filteredChildren[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SupportMessage(
+                                              otherUserEmail: child["email"],
+                                              otherUserName: child["name"],
+                                            )),
+                                  );
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 0,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                        color: Color(0xffe8e8e8)),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      child["name"],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff666666),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
                           ),
-                          const SizedBox(height: 16),
-                          // Children Section
-                          if (children.isNotEmpty) ...[
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "CHILDREN",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: children.length,
-                              itemBuilder: (context, index) {
-                                final child = children[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SupportMessage(
-                                                otherUserEmail: child["email"],
-                                                otherUserName: child["name"],
-                                              )),
-                                    );
-                                  },
-                                  child: Card(
-                                    color: Colors.white,
-                                    elevation: 0,
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 4.0),
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          color: Color(0xffe8e8e8)),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: ListTile(
-                                      title: Text(
-                                        child["name"],
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xff666666),
-                                        ),
-                                      ),
-                                      // trailing: const Icon(
-                                      //   Icons.notifications_none,
-                                      //   color: Colors.grey,
-                                      // ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                          const SizedBox(height: 16),
-                          // Support Section
-                          if (supports.isNotEmpty) ...[
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "SUPPORT",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: supports.length,
-                              itemBuilder: (context, index) {
-                                final support = supports[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SupportMessage(
-                                                otherUserEmail:
-                                                    support["email"],
-                                                otherUserName: support["name"],
-                                              )),
-                                    );
-                                  },
-                                  child: Card(
-                                    color: Colors.white,
-                                    elevation: 0,
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 4.0),
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          color: Color(0xffe8e8e8)),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: ListTile(
-                                      title: Text(
-                                        support["name"],
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xff666666),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ]
                         ],
-                      ),
+                        // Support Section
+                        if (filteredSupports.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "SUPPORT",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredSupports.length,
+                            itemBuilder: (context, index) {
+                              final support = filteredSupports[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SupportMessage(
+                                              otherUserEmail: support["email"],
+                                              otherUserName: support["name"],
+                                            )),
+                                  );
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 0,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                        color: Color(0xffe8e8e8)),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      support["name"],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff666666),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ]),
                     ),
                   ),
                 ),

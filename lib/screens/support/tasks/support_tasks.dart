@@ -15,6 +15,8 @@ class SupportTasks extends StatefulWidget {
 class _SupportTasksState extends State<SupportTasks> {
   List<Map<String, dynamic>> activeTasks = [];
   List<Map<String, dynamic>> archivedTasks = [];
+  List<Map<String, dynamic>> filteredActiveTasks = [];
+  List<Map<String, dynamic>> filteredArchivedTasks = [];
   bool isLoading = true;
   int totalStars = 0;
 
@@ -58,49 +60,6 @@ class _SupportTasksState extends State<SupportTasks> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text("An error occurred while fetching stars.")),
-      );
-    }
-  }
-
-  Future<void> fetchTasks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? supportEmail = prefs.getString('email');
-    final String? childEmail = prefs.getString('currentChildEmail');
-
-    if (supportEmail == null || childEmail == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Child or support information missing!")),
-      );
-      return;
-    }
-
-    const String url = "$baseUrl/get-tasks";
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(
-            {"supportEmail": supportEmail, "childEmail": childEmail}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        setState(() {
-          activeTasks = List<Map<String, dynamic>>.from(data['activeTasks']);
-          archivedTasks =
-              List<Map<String, dynamic>>.from(data['archivedTasks']);
-          isLoading = false;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to fetch tasks")),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("An error occurred while fetching tasks")),
       );
     }
   }
@@ -174,6 +133,68 @@ class _SupportTasksState extends State<SupportTasks> {
     );
   }
 
+  Future<void> fetchTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? supportEmail = prefs.getString('email');
+    final String? childEmail = prefs.getString('currentChildEmail');
+
+    if (supportEmail == null || childEmail == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Child or support information missing!")),
+      );
+      return;
+    }
+
+    const String url = "$baseUrl/get-tasks";
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(
+            {"supportEmail": supportEmail, "childEmail": childEmail}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        setState(() {
+          activeTasks = List<Map<String, dynamic>>.from(data['activeTasks']);
+          archivedTasks =
+              List<Map<String, dynamic>>.from(data['archivedTasks']);
+          filteredActiveTasks = List.from(activeTasks);
+          filteredArchivedTasks = List.from(archivedTasks);
+          isLoading = false;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to fetch tasks")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("An error occurred while fetching tasks")),
+      );
+    }
+  }
+
+  void filterTasks(String query) {
+    setState(() {
+      filteredActiveTasks = activeTasks
+          .where((task) => task['name']
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+      filteredArchivedTasks = archivedTasks
+          .where((task) => task['name']
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -181,6 +202,7 @@ class _SupportTasksState extends State<SupportTasks> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -276,11 +298,11 @@ class _SupportTasksState extends State<SupportTasks> {
                                   hintStyle: TextStyle(color: Colors.grey),
                                 ),
                                 onChanged: (value) {
-                                  // Handle search logic
+                                  filterTasks(value);
                                 },
                               ),
-                              const SizedBox(height: 16),
-                              if (activeTasks.isNotEmpty) ...[
+                              if (filteredActiveTasks.isNotEmpty) ...[
+                                const SizedBox(height: 16),
                                 const Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -295,9 +317,9 @@ class _SupportTasksState extends State<SupportTasks> {
                                 ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: activeTasks.length,
+                                  itemCount: filteredActiveTasks.length,
                                   itemBuilder: (context, index) {
-                                    final task = activeTasks[index];
+                                    final task = filteredActiveTasks[index];
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.pushReplacement(
@@ -353,9 +375,9 @@ class _SupportTasksState extends State<SupportTasks> {
                                     );
                                   },
                                 ),
-                                const SizedBox(height: 16),
                               ],
-                              if (archivedTasks.isNotEmpty) ...[
+                              if (filteredArchivedTasks.isNotEmpty) ...[
+                                const SizedBox(height: 16),
                                 const Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -370,9 +392,9 @@ class _SupportTasksState extends State<SupportTasks> {
                                 ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: archivedTasks.length,
+                                  itemCount: filteredArchivedTasks.length,
                                   itemBuilder: (context, index) {
-                                    final task = archivedTasks[index];
+                                    final task = filteredArchivedTasks[index];
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.pushReplacement(

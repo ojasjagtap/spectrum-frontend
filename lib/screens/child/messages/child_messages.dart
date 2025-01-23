@@ -14,7 +14,9 @@ class ChildMessages extends StatefulWidget {
 
 class _ChildMessagesState extends State<ChildMessages> {
   List<Map<String, dynamic>> supports = [];
+  List<Map<String, dynamic>> filteredSupports = [];
   bool isLoading = true;
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _ChildMessagesState extends State<ChildMessages> {
                     "name": support['name'],
                     "email": support['email'],
                   }));
+          filteredSupports = supports;
           isLoading = false;
         });
       } else {
@@ -62,11 +65,22 @@ class _ChildMessagesState extends State<ChildMessages> {
     }
   }
 
+  void filterSupports(String query) {
+    setState(() {
+      searchQuery = query.toLowerCase();
+      filteredSupports = supports
+          .where(
+              (support) => support["name"].toLowerCase().contains(searchQuery))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -143,7 +157,7 @@ class _ChildMessagesState extends State<ChildMessages> {
                                   hintStyle: TextStyle(color: Colors.grey),
                                 ),
                                 onChanged: (value) {
-                                  // Handle search logic
+                                  filterSupports(value);
                                 },
                               ),
                               const SizedBox(height: 16),
@@ -151,9 +165,9 @@ class _ChildMessagesState extends State<ChildMessages> {
                               ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: supports.length,
+                                itemCount: filteredSupports.length,
                                 itemBuilder: (context, index) {
-                                  final support = supports[index];
+                                  final support = filteredSupports[index];
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(

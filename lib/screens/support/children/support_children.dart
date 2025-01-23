@@ -13,6 +13,7 @@ class SupportChildren extends StatefulWidget {
 
 class _SupportChildrenState extends State<SupportChildren> {
   List<Map<String, dynamic>> children = [];
+  List<Map<String, dynamic>> filteredChildren = [];
   bool isLoading = true;
   late String supportEmail;
 
@@ -45,6 +46,7 @@ class _SupportChildrenState extends State<SupportChildren> {
         final responseData = jsonDecode(response.body);
         setState(() {
           children = List<Map<String, dynamic>>.from(responseData['children']);
+          filteredChildren = children;
           isLoading = false;
         });
       } else {
@@ -88,11 +90,8 @@ class _SupportChildrenState extends State<SupportChildren> {
                   setState(() {
                     children
                         .removeWhere((child) => child["email"] == childEmail);
+                    filteredChildren = children;
                   });
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(
-                  //       content: Text("Child link removed successfully")),
-                  // );
                 } else {
                   final errorMessage = jsonDecode(response.body)['message'];
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -113,11 +112,22 @@ class _SupportChildrenState extends State<SupportChildren> {
     );
   }
 
+  void filterChildren(String query) {
+    final filtered = children
+        .where((child) =>
+            child["name"].toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    setState(() {
+      filteredChildren = filtered;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           elevation: 0,
@@ -157,107 +167,103 @@ class _SupportChildrenState extends State<SupportChildren> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
+                  const SizedBox(height: 16),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xfff6f6f6),
+                          hintText: "Search",
+                          prefixIcon: Icon(Icons.search, color: Colors.grey),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                        onChanged: (value) {
+                          filterChildren(value);
+                        },
+                      )),
                   Expanded(
-                    child: children.isEmpty
-                        ? const Center(
-                            child: Text(
-                              "No children added yet.",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 18,
-                              ),
-                            ),
-                          )
-                        : Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 16),
-                                TextField(
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Color(0xfff6f6f6),
-                                    hintText: "Search",
-                                    prefixIcon:
-                                        Icon(Icons.search, color: Colors.grey),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Color(0xffe8e8e8)),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Color(0xffe8e8e8)),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                    ),
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                  ),
-                                  onChanged: (value) {
-                                    // Handle search logic
+                    // child: filteredChildren.isEmpty
+                    //     ? const Center(
+                    //         child: Text(
+                    //           "No children found.",
+                    //           style: TextStyle(
+                    //             color: Colors.grey,
+                    //             fontSize: 18,
+                    //           ),
+                    //         ),
+                    //       )
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 16),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: filteredChildren.length,
+                              itemBuilder: (context, index) {
+                                final child = filteredChildren[index];
+                                return GestureDetector(
+                                  onTap: () async {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+
+                                    await prefs.setString(
+                                        'currentChildEmail', child["email"]);
+
+                                    Navigator.pushReplacementNamed(
+                                        context, "/support_tasks");
                                   },
-                                ),
-                                const SizedBox(height: 16),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: children.length,
-                                    itemBuilder: (context, index) {
-                                      final child = children[index];
-                                      return GestureDetector(
-                                        onTap: () async {
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-
-                                          await prefs.setString(
-                                              'currentChildEmail',
-                                              child["email"]);
-
-                                          Navigator.pushReplacementNamed(
-                                              context, "/support_tasks");
-                                        },
-                                        child: Card(
-                                          elevation: 0,
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          color: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            side: const BorderSide(
-                                              color: Color(0xffe8e8e8),
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          child: ListTile(
-                                            title: Text(
-                                              child["name"],
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.green,
-                                              ),
-                                            ),
-                                            trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                  icon: const Icon(Icons.delete,
-                                                      color: Colors.grey),
-                                                  onPressed: () => deleteChild(
-                                                      child["email"]),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                  child: Card(
+                                    elevation: 0,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        color: Color(0xffe8e8e8),
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: ListTile(
+                                      title: Text(
+                                        child["name"],
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
                                         ),
-                                      );
-                                    },
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                color: Colors.grey),
+                                            onPressed: () =>
+                                                deleteChild(child["email"]),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                );
+                              },
                             ),
                           ),
+                        ],
+                      ),
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,

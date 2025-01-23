@@ -15,6 +15,8 @@ class SupportStars extends StatefulWidget {
 class _SupportStarsState extends State<SupportStars> {
   List<Map<String, dynamic>> activeStars = [];
   List<Map<String, dynamic>> archivedStars = [];
+  List<Map<String, dynamic>> filteredActiveStars = [];
+  List<Map<String, dynamic>> filteredArchivedStars = [];
   bool isLoading = true;
   int totalStars = 0;
 
@@ -93,6 +95,8 @@ class _SupportStarsState extends State<SupportStars> {
           activeStars = List<Map<String, dynamic>>.from(data['activeStars']);
           archivedStars =
               List<Map<String, dynamic>>.from(data['archivedStars']);
+          filteredActiveStars = List.from(activeStars);
+          filteredArchivedStars = List.from(archivedStars);
           isLoading = false;
         });
       } else {
@@ -178,6 +182,23 @@ class _SupportStarsState extends State<SupportStars> {
     );
   }
 
+  void filterStars(String query) {
+    setState(() {
+      filteredActiveStars = activeStars
+          .where((star) => star['name']
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+      filteredArchivedStars = archivedStars
+          .where((star) => star['name']
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -185,6 +206,7 @@ class _SupportStarsState extends State<SupportStars> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -280,11 +302,11 @@ class _SupportStarsState extends State<SupportStars> {
                                   hintStyle: TextStyle(color: Colors.grey),
                                 ),
                                 onChanged: (value) {
-                                  // Handle search logic
+                                  filterStars(value);
                                 },
                               ),
-                              const SizedBox(height: 16),
-                              if (activeStars.isNotEmpty) ...[
+                              if (filteredActiveStars.isNotEmpty) ...[
+                                const SizedBox(height: 16),
                                 const Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -299,9 +321,9 @@ class _SupportStarsState extends State<SupportStars> {
                                 ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: activeStars.length,
+                                  itemCount: filteredActiveStars.length,
                                   itemBuilder: (context, index) {
-                                    final star = activeStars[index];
+                                    final star = filteredActiveStars[index];
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.pushReplacement(
@@ -357,9 +379,9 @@ class _SupportStarsState extends State<SupportStars> {
                                     );
                                   },
                                 ),
-                                const SizedBox(height: 16),
                               ],
-                              if (archivedStars.isNotEmpty) ...[
+                              if (filteredArchivedStars.isNotEmpty) ...[
+                                const SizedBox(height: 16),
                                 const Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -374,9 +396,9 @@ class _SupportStarsState extends State<SupportStars> {
                                 ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: archivedStars.length,
+                                  itemCount: filteredArchivedStars.length,
                                   itemBuilder: (context, index) {
-                                    final star = archivedStars[index];
+                                    final star = filteredArchivedStars[index];
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.pushReplacement(

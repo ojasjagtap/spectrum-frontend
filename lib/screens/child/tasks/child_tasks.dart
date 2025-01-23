@@ -14,8 +14,10 @@ class ChildTasks extends StatefulWidget {
 
 class _ChildTasksState extends State<ChildTasks> {
   Map<String, List<Map<String, dynamic>>> supports = {};
+  Map<String, List<Map<String, dynamic>>> filteredSupports = {};
   int stars = 0;
   bool isLoading = true;
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -53,6 +55,7 @@ class _ChildTasksState extends State<ChildTasks> {
             for (var support in taskList)
               support['_id']: List<Map<String, dynamic>>.from(support['tasks'])
           };
+          filteredSupports = Map.from(supports);
           isLoading = false;
         });
       } else {
@@ -105,11 +108,32 @@ class _ChildTasksState extends State<ChildTasks> {
     }
   }
 
+  void filterTasks(String query) {
+    setState(() {
+      searchQuery = query;
+      if (query.isEmpty) {
+        filteredSupports = Map.from(supports);
+      } else {
+        filteredSupports = supports.map((key, tasks) {
+          final filteredTasks = tasks
+              .where((task) => task['name']
+                  .toString()
+                  .toLowerCase()
+                  .contains(query.toLowerCase()))
+              .toList();
+          return MapEntry(key, filteredTasks);
+        })
+          ..removeWhere((key, tasks) => tasks.isEmpty);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -164,130 +188,164 @@ class _ChildTasksState extends State<ChildTasks> {
       ),
       body: Stack(
         children: [
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : supports.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No tasks available.",
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 100),
-                      itemCount: supports.keys.length,
-                      itemBuilder: (context, index) {
-                        final support = supports.keys.elementAt(index);
-                        final tasks = supports[support]!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
-                              child: Text(
-                                support,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Color(0xfff6f6f6),
+                    hintText: "Search",
+                    prefixIcon: Icon(Icons.search, color: Colors.grey),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                  onChanged: filterTasks,
+                ),
+              ),
+              Expanded(
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : supports.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "No tasks available.",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 16),
                             ),
-                            Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              height: 140,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: tasks.length,
-                                itemBuilder: (context, taskIndex) {
-                                  final task = tasks[taskIndex];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChildTaskDetails(
-                                                  taskId: task["_id"]),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Column(
-                                        children: [
-                                          Stack(
-                                            children: [
-                                              Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xfff6f6f6),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12.0),
-                                                  border: Border.all(
-                                                      color: const Color(
-                                                          0xffe8e8e8)),
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        task['image']),
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                top: 4,
-                                                right: 4,
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(4.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        "${task['starsWorth']}",
-                                                        style: const TextStyle(
-                                                          color:
-                                                              Color(0xff666666),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const Icon(
-                                                        Icons.star,
-                                                        color: Colors.orange,
-                                                        size: 16,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            task['name'],
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
+                          )
+                        : ListView.builder(
+                            padding:
+                                const EdgeInsets.only(bottom: 120, left: 16),
+                            itemCount: filteredSupports.keys.length,
+                            itemBuilder: (context, index) {
+                              final support =
+                                  filteredSupports.keys.elementAt(index);
+                              final tasks = filteredSupports[support]!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0, vertical: 8.0),
+                                    child: Text(
+                                      support,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    height: 140,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: tasks.length,
+                                      itemBuilder: (context, taskIndex) {
+                                        final task = tasks[taskIndex];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChildTaskDetails(
+                                                        taskId: task["_id"]),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Column(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    Container(
+                                                      width: 100,
+                                                      height: 100,
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xfff6f6f6),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12.0),
+                                                        border: Border.all(
+                                                            color: const Color(
+                                                                0xffe8e8e8)),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              task['image']),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      top: 4,
+                                                      right: 4,
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(4.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              "${task['starsWorth']}",
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Color(
+                                                                    0xff666666),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const Icon(
+                                                              Icons.star,
+                                                              color:
+                                                                  Colors.orange,
+                                                              size: 16,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  task['name'],
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+              ),
+            ],
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(

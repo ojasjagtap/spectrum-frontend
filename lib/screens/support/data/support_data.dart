@@ -167,7 +167,7 @@ class _SupportDataState extends State<SupportData> {
                 SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 32.0, bottom: 16, right: 32),
+                        left: 48.0, bottom: 16, right: 48),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -177,8 +177,7 @@ class _SupportDataState extends State<SupportData> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset(
-                                emotionImages[latestMood] ??
-                                    'assets/neutral.png',
+                                emotionImages[latestMood] ?? 'assets/happy.png',
                                 height: 100,
                                 width: 100,
                               ),
@@ -207,11 +206,12 @@ class _SupportDataState extends State<SupportData> {
 
                         Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.grey, width: 2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(32.0),
+                            padding: const EdgeInsets.only(
+                                top: 24.0, bottom: 16.0, left: 16, right: 24),
                             child: SizedBox(
                               height: 300,
                               child: ScatterChart(
