@@ -76,7 +76,7 @@ class _SupportEditTaskState extends State<SupportEditTask> {
       );
 
       if (response.statusCode == 200) {
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, "/support_tasks");
       } else {
         final errorMessage = jsonDecode(response.body)['message'];
         ScaffoldMessenger.of(context).showSnackBar(

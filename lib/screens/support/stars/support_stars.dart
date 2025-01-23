@@ -304,7 +304,7 @@ class _SupportStarsState extends State<SupportStars> {
                                     final star = activeStars[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -379,7 +379,7 @@ class _SupportStarsState extends State<SupportStars> {
                                     final star = archivedStars[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>

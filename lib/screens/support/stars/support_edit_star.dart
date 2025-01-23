@@ -78,7 +78,7 @@ class _SupportEditStarState extends State<SupportEditStar> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   const SnackBar(content: Text("Star updated successfully!")),
         // );
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, "/support_stars");
       } else {
         final errorMessage = jsonDecode(response.body)['message'];
         ScaffoldMessenger.of(context).showSnackBar(

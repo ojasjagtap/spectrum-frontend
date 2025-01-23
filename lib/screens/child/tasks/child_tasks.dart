@@ -205,7 +205,7 @@ class _ChildTasksState extends State<ChildTasks> {
                                   final task = tasks[taskIndex];
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>

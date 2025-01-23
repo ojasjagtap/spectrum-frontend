@@ -300,7 +300,7 @@ class _SupportTasksState extends State<SupportTasks> {
                                     final task = activeTasks[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -375,7 +375,7 @@ class _SupportTasksState extends State<SupportTasks> {
                                     final task = archivedTasks[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>

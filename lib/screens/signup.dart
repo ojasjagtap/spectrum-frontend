@@ -36,6 +36,8 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   String? selectedUserType;
 
   @override
@@ -114,6 +116,25 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const SizedBox(height: 16.0),
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Confirm Password",
+                  filled: true,
+                  fillColor: Color(0xfff6f6f6),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xffe8e8e8)),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  labelStyle: TextStyle(color: Colors.grey),
+                ),
+              ),
+              const SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -174,18 +195,27 @@ class _SignUpState extends State<SignUp> {
                   if (nameController.text.isNotEmpty &&
                       emailController.text.isNotEmpty &&
                       passwordController.text.isNotEmpty &&
+                      confirmPasswordController.text.isNotEmpty &&
                       selectedUserType != null) {
-                    final name = nameController.text;
-                    final email = emailController.text;
-                    final password = passwordController.text;
+                    if (passwordController.text ==
+                        confirmPasswordController.text) {
+                      final name = nameController.text;
+                      final email = emailController.text;
+                      final password = passwordController.text;
 
-                    await signUp(name, email, password, selectedUserType!);
+                      await signUp(name, email, password, selectedUserType!);
 
-                    Navigator.pushReplacementNamed(context, '/login');
+                      Navigator.pushReplacementNamed(context, '/login');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Passwords do not match!")),
+                      );
+                    }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text("Please enter user information!")),
+                          content: Text("Please enter all user information!")),
                     );
                   }
                 },
