@@ -134,7 +134,7 @@ class _SupportAddTaskState extends State<SupportAddTask> {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/support_tasks");
                 },
                 child: const Text(
                   "Back",

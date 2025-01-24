@@ -144,7 +144,7 @@ class _ChildMessageState extends State<ChildMessage> {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/child_messages");
                 },
                 child: const Text(
                   "Back",

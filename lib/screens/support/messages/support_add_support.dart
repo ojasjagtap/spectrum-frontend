@@ -44,7 +44,7 @@ class SupportAddSupport extends StatelessWidget {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   const SnackBar(content: Text("Support linked successfully!")),
         // );
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, "/support_messages");
       } else {
         final errorMessage = jsonDecode(response.body)['message'];
         ScaffoldMessenger.of(context).showSnackBar(
@@ -74,7 +74,7 @@ class SupportAddSupport extends StatelessWidget {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/support_messages");
                 },
                 child: const Text(
                   "Back",

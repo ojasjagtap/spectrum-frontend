@@ -115,7 +115,7 @@ class _ChildTaskDetailsState extends State<ChildTaskDetails> {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/child_tasks");
                 },
                 child: const Text(
                   "Back",

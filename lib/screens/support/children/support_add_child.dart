@@ -94,7 +94,7 @@ class _SupportAddChildState extends State<SupportAddChild> {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/support_children");
                 },
                 child: const Text(
                   "Back",

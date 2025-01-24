@@ -144,7 +144,7 @@ class _SupportMessageState extends State<SupportMessage> {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/support_messages");
                 },
                 child: const Text(
                   "Back",

@@ -117,7 +117,7 @@ class _SupportEditStarState extends State<SupportEditStar> {
               width: 80,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, "/support_stars");
                 },
                 child: const Text(
                   "Back",
