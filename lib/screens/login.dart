@@ -27,12 +27,15 @@ class _LoginState extends State<Login> {
     final String? token = prefs.getString('authToken');
 
     if (token != null) {
-      final userType = prefs.getString('userType');
+      final String? userType = prefs.getString('userType');
+      final String? email = prefs.getString('email');
 
-      if (userType == "Support") {
-        Navigator.pushReplacementNamed(context, "/support_children");
-      } else {
-        Navigator.pushReplacementNamed(context, "/child_home");
+      if (email != null) {
+        if (userType == "Support") {
+          Navigator.pushReplacementNamed(context, "/support_children");
+        } else {
+          Navigator.pushReplacementNamed(context, "/child_home");
+        }
       }
     }
   }
@@ -59,6 +62,7 @@ class _LoginState extends State<Login> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', token);
         await prefs.setString('userType', userType);
+        await prefs.setString('email', email);
 
         if (userType == "Support") {
           Navigator.pushReplacementNamed(context, "/support_children");

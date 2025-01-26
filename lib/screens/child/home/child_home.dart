@@ -43,7 +43,6 @@ class _MoodDrawerState extends State<MoodDrawer>
   void _hideDrawer() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('email');
-    final String? token = prefs.getString('authToken');
 
     if (email == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,10 +56,7 @@ class _MoodDrawerState extends State<MoodDrawer>
     try {
       final response = await http.post(
         Uri.parse(url),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
+        headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": email,
           "mood": _selectedEmotion,
