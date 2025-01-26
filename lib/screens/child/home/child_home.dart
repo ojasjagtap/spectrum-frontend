@@ -269,7 +269,9 @@ class _ChildHomeState extends State<ChildHome> {
             SizedBox(
               width: 80,
               child: TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('authToken');
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 child: const Text(

@@ -16,6 +16,27 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  Future<void> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('authToken');
+
+    if (token != null) {
+      final userType = prefs.getString('userType');
+
+      if (userType == "Support") {
+        Navigator.pushReplacementNamed(context, "/support_children");
+      } else {
+        Navigator.pushReplacementNamed(context, "/child_home");
+      }
+    }
+  }
+
   Future<void> loginUser(String email, String password) async {
     setState(() {
       isLoading = true;
@@ -32,10 +53,12 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        final String token = responseData['token'];
         final String userType = responseData['userType'];
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('email', email);
+        await prefs.setString('authToken', token);
+        await prefs.setString('userType', userType);
 
         if (userType == "Support") {
           Navigator.pushReplacementNamed(context, "/support_children");
