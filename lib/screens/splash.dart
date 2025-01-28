@@ -15,25 +15,6 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
-  }
-
-  Future<void> checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken');
-
-    if (token != null) {
-      final String? userType = prefs.getString('userType');
-      final String? email = prefs.getString('email');
-
-      if (email != null) {
-        if (userType == "Support") {
-          Navigator.pushReplacementNamed(context, "/support_children");
-        } else {
-          Navigator.pushReplacementNamed(context, "/child_home");
-        }
-      }
-    }
     _checkServerConnection();
   }
 
@@ -42,6 +23,21 @@ class _SplashState extends State<Splash> {
     try {
       final response = await http.get(Uri.parse(serverUrl));
       if (response.statusCode == 200) {
+        final prefs = await SharedPreferences.getInstance();
+        final String? token = prefs.getString('authToken');
+
+        if (token != null) {
+          final String? userType = prefs.getString('userType');
+          final String? email = prefs.getString('email');
+
+          if (email != null) {
+            if (userType == "Support") {
+              Navigator.pushReplacementNamed(context, "/support_children");
+            } else {
+              Navigator.pushReplacementNamed(context, "/child_home");
+            }
+          }
+        }
         Navigator.pushReplacementNamed(context, '/login');
       } else {
         print("Server connection failed. Status code: ${response.statusCode}");
