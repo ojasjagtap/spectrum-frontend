@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:autbuddy/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -14,6 +15,25 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
+    checkLoginStatus();
+  }
+
+  Future<void> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('authToken');
+
+    if (token != null) {
+      final String? userType = prefs.getString('userType');
+      final String? email = prefs.getString('email');
+
+      if (email != null) {
+        if (userType == "Support") {
+          Navigator.pushReplacementNamed(context, "/support_children");
+        } else {
+          Navigator.pushReplacementNamed(context, "/child_home");
+        }
+      }
+    }
     _checkServerConnection();
   }
 

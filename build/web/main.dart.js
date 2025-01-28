@@ -39936,20 +39936,7 @@ A.oM.prototype={
 a8(){var s=$.aj()
 return new A.RE(new A.d6(B.aE,s),new A.d6(B.aE,s))}}
 A.RE.prototype={
-ak(){this.aC()
-this.yH()},
-yH(){var s=0,r=A.G(t.H),q=this,p,o,n
-var $async$yH=A.H(function(a,b){if(a===1)return A.D(b,r)
-while(true)switch(s){case 0:s=2
-return A.B(A.cW(),$async$yH)
-case 2:n=b.a
-if(A.bi(n.h(0,"authToken"))!=null){p=A.bi(n.h(0,"userType"))
-if(A.bi(n.h(0,"email"))!=null){n=t.X
-o=q.c
-if(p==="Support"){o.toString
-A.al(o,"/support_children",n,n)}else{o.toString
-A.al(o,"/child_home",n,n)}}}return A.E(null,r)}})
-return A.F($async$yH,r)},
+ak(){this.aC()},
 ms(a,b){return this.amL(a,b)},
 amL(a,b){var s=0,r=A.G(t.H),q=1,p,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c
 var $async$ms=A.H(function(a0,a1){if(a0===1){p=a1
@@ -40078,7 +40065,20 @@ A.pJ.prototype={
 a8(){return new A.EU()}}
 A.EU.prototype={
 ak(){this.aC()
-this.rq()},
+this.yH()},
+yH(){var s=0,r=A.G(t.H),q=this,p,o,n
+var $async$yH=A.H(function(a,b){if(a===1)return A.D(b,r)
+while(true)switch(s){case 0:s=2
+return A.B(A.cW(),$async$yH)
+case 2:n=b.a
+if(A.bi(n.h(0,"authToken"))!=null){p=A.bi(n.h(0,"userType"))
+if(A.bi(n.h(0,"email"))!=null){n=t.X
+o=q.c
+if(p==="Support"){o.toString
+A.al(o,"/support_children",n,n)}else{o.toString
+A.al(o,"/child_home",n,n)}}}q.rq()
+return A.E(null,r)}})
+return A.F($async$yH,r)},
 rq(){var s=0,r=A.G(t.H),q=1,p,o=this,n,m,l,k,j,i
 var $async$rq=A.H(function(a,b){if(a===1){p=b
 s=q}while(true)switch(s){case 0:q=3

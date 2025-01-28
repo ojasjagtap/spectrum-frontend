@@ -19,25 +19,6 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    checkLoginStatus();
-  }
-
-  Future<void> checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken');
-
-    if (token != null) {
-      final String? userType = prefs.getString('userType');
-      final String? email = prefs.getString('email');
-
-      if (email != null) {
-        if (userType == "Support") {
-          Navigator.pushReplacementNamed(context, "/support_children");
-        } else {
-          Navigator.pushReplacementNamed(context, "/child_home");
-        }
-      }
-    }
   }
 
   Future<void> loginUser(String email, String password) async {
