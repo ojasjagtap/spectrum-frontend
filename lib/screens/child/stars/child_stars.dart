@@ -316,9 +316,7 @@ class _ChildStarsState extends State<ChildStars> {
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
+                                    SizedBox(
                                       height: 140,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,

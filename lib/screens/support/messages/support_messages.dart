@@ -155,14 +155,17 @@ class _SupportMessagesState extends State<SupportMessages> {
                         // Children Section
                         if (filteredChildren.isNotEmpty) ...[
                           const SizedBox(height: 16),
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "CHILDREN",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "CHILDREN",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
                               ),
                             ),
                           ),
@@ -211,14 +214,17 @@ class _SupportMessagesState extends State<SupportMessages> {
                         // Support Section
                         if (filteredSupports.isNotEmpty) ...[
                           const SizedBox(height: 16),
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "SUPPORT",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "SUPPORT",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
                               ),
                             ),
                           ),

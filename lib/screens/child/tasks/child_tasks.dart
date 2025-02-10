@@ -245,9 +245,7 @@ class _ChildTasksState extends State<ChildTasks> {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
+                                  SizedBox(
                                     height: 140,
                                     child: ListView.builder(
                                       scrollDirection: Axis.horizontal,

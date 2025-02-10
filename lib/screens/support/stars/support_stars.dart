@@ -307,14 +307,17 @@ class _SupportStarsState extends State<SupportStars> {
                               ),
                               if (filteredActiveStars.isNotEmpty) ...[
                                 const SizedBox(height: 16),
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "ACTIVE",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green,
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "ACTIVE",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -382,14 +385,17 @@ class _SupportStarsState extends State<SupportStars> {
                               ],
                               if (filteredArchivedStars.isNotEmpty) ...[
                                 const SizedBox(height: 16),
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "ARCHIVE",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green,
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "ARCHIVE",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
                                     ),
                                   ),
                                 ),
